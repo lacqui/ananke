@@ -15,21 +15,15 @@
 
 */}}
 
-{{/* Declare a new string variable, $linkToCover */}}
-{{ $linkToCover := "" }}
-
 {{/* Use the value from front matter if present */}}
 {{ if .Params.featured_image }}
-    {{ $linkToCover = .Params.featured_image }}
+    {{ .Scratch.Set "featured" (.Resources.Match .Params.featured_image) }}
 
 {{/* Find the first image with 'cover' in the name in this page bundle. */}}
 {{ else }}
-    {{ $img := (.Resources.ByType "image").GetMatch "*cover*" }}
-    {{ with $img }}
-        {{ $linkToCover = .Permalink }}
-    {{ end }}
+    {{ .Scratch.Set "featured" ((.Resources.ByType "image").GetMatch "*cover*") }}
 {{ end }}
 
 {{/* return either a permalink, or an empty string. Note that partials can only have a single
 return statement, so this needs to be at the end of the partial (and not in the if block) */}}
-{{ return $linkToCover }}
+{{ return .Scratch.Get "featured" }}
